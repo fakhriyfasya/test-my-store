@@ -9,14 +9,16 @@ pipeline {
         }
        
        stage('SonarQube analysis') {
-          def scannerHome = tool 'sonarqube';
-          withSonarQubeEnv('sonarqube-server') {
-             sh "${scannerHome}/bin/sonar-scanner \
-             -D sonar.login=admin \
-             -D sonar.password=admin123 \
-             -D sonar.projectKey=web-store-app \
-             -D sonar.exclusions=vendor/**,resources/**,**/*.java \
-             -D sonar.host.url=http://34.128.99.9:9000/"
+           steps {
+               def scannerHome = tool 'sonarqube';
+               withSonarQubeEnv('sonarqube-server') {
+                   sh "${scannerHome}/bin/sonar-scanner \
+                   -D sonar.login=admin \
+                   -D sonar.password=admin123 \
+                   -D sonar.projectKey=web-store-app \
+                   -D sonar.exclusions=vendor/**,resources/**,**/*.java \
+                   -D sonar.host.url=http://34.128.99.9:9000/"
+            }       
          }
        }
     }
