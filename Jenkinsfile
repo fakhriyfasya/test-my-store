@@ -1,21 +1,23 @@
-def scannerHome = tool 'SonarScanner 4.0';
-
 pipeline {
-   agent any
-   stages {
-        stage('Checkout') {
+    agent {label "linux"}
+
+    stages {
+        stage('Git Clone') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-token2', url: 'https://github.com/fakhriyfasya/test-my-store.git']]])
-                sh "ls -lart ./*"
-            }
-        }     
-        
-        stage('SonarQube analysis') {
-            steps {
-                withSonarQubeEnv(credentialsId: 'sonar-token') { // If you have configured more than one global server connection, you can specify its name
-                sh "${scannerHome}/bin/sonar-scanner"
-                }
+                git 'https://github.com/fakhriyfasya/test-my-store.git'
             }
         }
+       
+       stage('SonarQube analysis') {
+          def scannerHome = tool 'sonarqube';
+          withSonarQubeEnv('sonarqube-server') {
+             sh "${scannerHome}/bin/sonar-scanner \
+             -D sonar.login=admin \
+             -D sonar.password=admin123 \
+             -D sonar.projectKey=web-store-app \
+             -D sonar.exclusions=vendor/**,resources/**,**/*.java \
+             -D sonar.host.url=http://34.128.99.9:9000/"
+         }
+       }
     }
 }
