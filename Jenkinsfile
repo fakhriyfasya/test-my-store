@@ -10,7 +10,7 @@ pipeline {
        
        stage('SonarQube analysis') {
            steps {
-               def scannerHome = tool 'sonarqube';
+               def scannerHome = tool = 'sonarqube';
                withSonarQubeEnv('sonarqube-server') {
                    sh "${scannerHome}/bin/sonar-scanner \
                    -D sonar.login=admin \
